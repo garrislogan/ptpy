@@ -1,0 +1,8 @@
+{
+    "TOR_PT_MANAGED_TRANSPORT_VER": "1",
+    "TOR_PT_STATE_LOCATION": "/home/galvanix/git/ptpy/server",
+    "TOR_PT_EXIT_ON_STDIN_CLOSE": "0",
+    "TOR_PT_SERVER_TRANSPORTS": "obfs4",
+    "TOR_PT_SERVER_BINDADDR": "obfs4-127.0.0.1:1234",
+    "TOR_PT_ORPORT": "127.0.0.1:9001"
+}

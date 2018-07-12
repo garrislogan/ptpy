@@ -1,0 +1,6 @@
+{
+    "TOR_PT_MANAGED_TRANSPORT_VER": "1",
+    "TOR_PT_STATE_LOCATION": "/home/galvanix/git/ptpy/client",
+    "TOR_PT_EXIT_ON_STDIN_CLOSE": "0",
+    "TOR_PT_CLIENT_TRANSPORTS": "obfs4"
+}
