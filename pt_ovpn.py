@@ -83,8 +83,7 @@ def start_ovpn(conf,pt_state):
     # all OpenVPN options and configuration except the SOCKS5 proxy
     # should be configured using a regular OpenVPN config file
 
-    proc_cmd = [conf["exec"],
-                "--config {}".format(conf["config"])]
+    proc_cmd = ["sudo",conf["exec"],"--config",conf["config"]]
     
     if pt_state["mode"] == "client":
         # find first available SOCKS5 proxy provided by pluggable transport
@@ -94,9 +93,8 @@ def start_ovpn(conf,pt_state):
             raise RuntimeError("No suitable SOCKS5 proxy available to OpenVPN")
        
         # OpenVPN command line option to use the SOCKS5 proxy provided by PT
-        proc_cmd.append("--socks-proxy {} {} {}".format(s5p["addr"][0],
-                                                        s5p["addr"][1],
-                                                        conf["socks_auth"]))
+        proc_cmd += ["--socks-proxy",s5p["addr"][0],
+                     str(s5p["addr"][1]),conf["socks_auth"]]
 
     ovpn_proc = subprocess.Popen(proc_cmd)
 
@@ -114,14 +112,22 @@ if __name__ == "__main__":
 
     # start OpenVPN
     ovpn_proc = start_ovpn(config["OpenVPN"],pt_state)   
- 
-    while ovpn_proc.poll() == None or pt_proc.poll() == None:
-        pass
 
-    ovpn_proc.terminate()
-    while ovpn_proc.poll() == None:
-        pass
+    try:
+        while True:
+            try:
+                pt_proc.communicate(timeout=15)
+            except subprocess.TimeoutExpired:
+                pass
+    except KeyboardInterrupt:
+        ovpn_proc.terminate()
+        try:
+            ovpn_proc.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            pass
 
-    pt_proc.terminate()
-    while pt_proc.poll() == None:
-        pass    
+        pt_proc.terminate()
+        try: 
+            pt_proc.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            pass
